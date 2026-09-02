@@ -97,6 +97,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapFallbackToController("NotFound", "Home");
+
 // Ensure database created and seeded (optional)
 using (var scope = app.Services.CreateScope())
 {
