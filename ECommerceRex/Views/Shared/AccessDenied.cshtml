@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+<div class="error-page glass-card" style="max-width:600px; margin:4rem auto; text-align:center; padding:3rem 2rem;">
+    <div style="font-size:4rem; margin-bottom:1rem;">⛔</div>
+    <h1 style="color:#fbbf24;">Access Denied</h1>
+    <p style="color:#d8cff0; margin:1.5rem 0;">
+        You are logged in as <strong>@User.Identity?.Name</strong>.
+        This area requires the <strong>Admin</strong> role.
+    </p>
+    <p style="color:#b0a0c8;">Please log out and switch to an admin account.</p>
+    <div style="display:flex; gap:1rem; justify-content:center; margin-top:2rem; flex-wrap:wrap;">
+        <a href="/" class="btn-primary" style="width:auto; padding:0.5rem 1.5rem;">Go Home</a>
+        <a href="/User/Logout" class="btn-secondary" style="background:transparent; border:1px solid rgba(168,85,247,0.5); padding:0.5rem 1.5rem; border-radius:0.75rem; color:#c084fc; text-decoration:none;">Logout</a>
+    </div>
+</div>
