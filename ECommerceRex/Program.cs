@@ -60,12 +60,26 @@ builder.Services.AddAuthorization();
 
 // Disable HTTPS redirection (as per spec)
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
 
 var app = builder.Build();
 
 // Custom error pages
 app.UseStatusCodePagesWithReExecute("/Home/Error/{0}"); // for status codes
 app.UseExceptionHandler("/Home/Error"); // for 500
+
+app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 403 && !context.Response.HasStarted)
+    {
+        context.Request.Path = "/Home/AccessDenied";
+        await next();
+    }
+});
 
 // Also handle 404 explicitly with a custom route
 app.Use(async (context, next) =>
