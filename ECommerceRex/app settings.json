@@ -1,0 +1,22 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=sqlserver;Database=ECommerceRexDb;User=sa;Password=Your_password123;TrustServerCertificate=true;",
+    "Redis": "redis:6379"
+  },
+  "Jwt": {
+    "Secret": "SuperSecretKey_AtLeast32CharactersLong!",
+    "Issuer": "ECommerceRex",
+    "Audience": "ECommerceRexUsers",
+    "ExpiryMinutes": 60
+  },
+  "Hmac": {
+    "SecretKey": "HmacSecretKey_AtLeast32Bytes!"
+  },
+  "AllowedHosts": "*"
+}
