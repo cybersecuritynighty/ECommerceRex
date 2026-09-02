@@ -4,6 +4,15 @@ namespace ECommerceRex.Controllers;
 
 public class HomeController : Controller
 {
+    public async Task<IActionResult> Index()
+    {
+        ViewBag.ProductCount = await _context.Products.CountAsync();
+        ViewBag.UserCount = await _context.Users.CountAsync();
+        ViewBag.TransactionCount = await _context.Transactions.CountAsync();
+        ViewBag.FeaturedProducts = await _context.Products.OrderByDescending(p => p.Id).Take(4).ToListAsync();
+        return View();
+    }
+    
     public IActionResult Index() {
         return View();
     }
