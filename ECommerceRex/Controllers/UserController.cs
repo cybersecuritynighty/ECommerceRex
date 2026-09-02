@@ -112,5 +112,16 @@ public class UserController : Controller
     }
 
     [Authorize]
-    public IActionResult Index() => View(); // Profile view
+    public IActionResult Index() {
+        return View(); // Profile view
+    }
+
+    // Add this method to Controllers/UserController.cs
+    [HttpPost]
+    [Authorize]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("auth_token");
+        return RedirectToAction("Index", "Home");
+    }
 }
