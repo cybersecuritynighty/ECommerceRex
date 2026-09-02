@@ -1,0 +1,21 @@
+@model IEnumerable<ECommerceRex.Models.Product>
+@{
+    ViewData["Title"] = "Product List";
+}
+<div class="glass-card">
+    <h2>All Products</h2>
+    <table class="table">
+        <thead><tr><th>Name</th><th>Price</th><th>Stock</th><th>Category</th></tr></thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Name</td>
+                    <td>@p.Price.ToString("C")</td>
+                    <td>@p.StockQuantity</td>
+                    <td>@p.Category</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
