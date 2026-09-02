@@ -157,5 +157,5 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.BotToken = builder.Configuration["Authentication:Telegram:BotToken"];
         // Or use a custom handler
     });
-
+app.UseSession();
 app.Run();
