@@ -28,4 +28,31 @@ public class HomeController : Controller
     public IActionResult Bank() {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult Error(string? id = null)
+    {
+        ViewData["Error"] = id switch
+        {
+            "404" => "Page not found.",
+            "403" => "Forbidden.",
+            "500" => "Internal server error.",
+            _ => "An unexpected error occurred."
+        };
+        return View();
+    }
+
+[HttpGet]
+public IActionResult NotFound()
+{
+    ViewData["RequestedUrl"] = Request.Query["requestedUrl"].FirstOrDefault() ?? Request.Path;
+    return View();
+}
+
+[HttpGet]
+public IActionResult AccessDenied()
+{
+    return View();
+}
+    
 }
