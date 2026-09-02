@@ -17,6 +17,21 @@
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
         <button type="submit" class="btn-primary">Login</button>
+
+        <div class="social-login" style="margin-top:1.5rem;">
+    <p style="text-align:center; color:#b0a0c8;">Or login with</p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a asp-action="ExternalLogin" asp-route-provider="Google" class="btn-social" style="background:#db4437; color:#fff; padding:0.5rem 1.2rem; border-radius:0.5rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;">
+            <i class="fab fa-google"></i> Google
+        </a>
+        <a asp-action="ExternalLogin" asp-route-provider="GitHub" class="btn-social" style="background:#333; color:#fff; padding:0.5rem 1.2rem; border-radius:0.5rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;">
+            <i class="fab fa-github"></i> GitHub
+        </a>
+        <a asp-action="TelegramLogin" class="btn-social" style="background:#0088cc; color:#fff; padding:0.5rem 1.2rem; border-radius:0.5rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;">
+            <i class="fab fa-telegram"></i> Telegram
+        </a>
+    </div>
+</div>
     </form>
     <p>Don't have an account? <a href="/User/SignUp">Sign up</a></p>
 </div>
