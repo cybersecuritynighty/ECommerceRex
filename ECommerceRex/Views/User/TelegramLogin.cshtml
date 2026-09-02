@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Telegram Login";
+    var botUsername = "YourBotUsername"; // from config
+    var returnUrl = ViewBag.ReturnUrl as string ?? "/";
+}
+<div class="glass-card" style="max-width:400px; margin:2rem auto; text-align:center;">
+    <h2>Login with Telegram</h2>
+    <script async src="https://telegram.org/js/telegram-widget.js?22"
+            data-telegram-login="@botUsername"
+            data-size="large"
+            data-auth-url="@Url.Action("TelegramCallback", "User", new { returnUrl })"
+            data-request-access="write">
+    </script>
+    <p style="margin-top:1rem; color:#b0a0c8;">Click the button above to log in with Telegram.</p>
+</div>
