@@ -1,0 +1,23 @@
+@model IEnumerable<ECommerceRex.Models.User>
+@{
+    ViewData["Title"] = "User List";
+}
+<div class="glass-card">
+    <h2>Registered Users</h2>
+    <table class="table" style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.Username</td>
+                    <td>@u.Email</td>
+                    <td>@u.Role</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
