@@ -1,7 +1,103 @@
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Home – E‑Commerce Rex";
+    // You can replace these with real data from ViewBag or Model
+    var productCount = 125; // from database
+    var userCount = 3420;
+    var transactionCount = 15789;
+    var featuredProducts = new List<dynamic>
+    {
+        new { Name = "Premium Headphones", Price = 199.99m, Image = "🎧" },
+        new { Name = "Smart Watch Pro", Price = 349.50m, Image = "⌚" },
+        new { Name = "Wireless Earbuds", Price = 89.99m, Image = "🎵" },
+        new { Name = "4K Action Camera", Price = 299.00m, Image = "📷" }
+    };
 }
 <div class="hero-section">
     <h1>Welcome to E‑Commerce Rex</h1>
     <p class="glass-card">Your secure, high‑performance e‑commerce platform.</p>
 </div>
+<!-- Hero Section -->
+<section class="hero-section glass-card" style="text-align:center; padding:4rem 2rem; margin-bottom:3rem; position:relative; overflow:hidden;">
+    <div class="hero-glow" style="position:absolute; top:-50%; left:-30%; width:80%; height:80%; background:radial-gradient(circle, rgba(124,58,237,0.2), transparent 70%); pointer-events:none;"></div>
+    <h1 style="font-size:3.5rem; font-weight:800; background:linear-gradient(135deg, #c084fc, #d946ef); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem;">
+        Welcome to E‑Commerce Rex
+    </h1>
+    <p style="font-size:1.2rem; color:#d8cff0; max-width:600px; margin:0 auto 2rem;">
+        The next‑gen platform with <strong>HMAC‑protected ledger</strong>, <strong>JWT security</strong>, and a stunning glassmorphism UI.
+    </p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="/Products" class="btn-primary" style="width:auto; padding:0.8rem 2.5rem;">Browse Products</a>
+        <a href="/User/SignUp" class="btn-secondary" style="background:transparent; border:1px solid rgba(168,85,247,0.5); padding:0.8rem 2.5rem; border-radius:0.75rem; color:#c084fc; text-decoration:none; transition:0.2s;">Get Started</a>
+    </div>
+</section>
+
+<!-- Statistics Cards -->
+<div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:1.5rem; margin-bottom:3rem;">
+    <div class="stat-card glass-card" style="text-align:center; padding:1.5rem;">
+        <div style="font-size:2.5rem;">📦</div>
+        <div style="font-size:2rem; font-weight:700; color:#c084fc;">@productCount</div>
+        <div style="color:#b0a0c8;">Products</div>
+    </div>
+    <div class="stat-card glass-card" style="text-align:center; padding:1.5rem;">
+        <div style="font-size:2.5rem;">👥</div>
+        <div style="font-size:2rem; font-weight:700; color:#c084fc;">@userCount</div>
+        <div style="color:#b0a0c8;">Active Users</div>
+    </div>
+    <div class="stat-card glass-card" style="text-align:center; padding:1.5rem;">
+        <div style="font-size:2.5rem;">💳</div>
+        <div style="font-size:2rem; font-weight:700; color:#c084fc;">@transactionCount</div>
+        <div style="color:#b0a0c8;">Transactions</div>
+    </div>
+    <div class="stat-card glass-card" style="text-align:center; padding:1.5rem;">
+        <div style="font-size:2.5rem;">⚡</div>
+        <div style="font-size:2rem; font-weight:700; color:#c084fc;">99.9%</div>
+        <div style="color:#b0a0c8;">Uptime</div>
+    </div>
+</div>
+
+<!-- Featured Products -->
+<section style="margin-bottom:3rem;">
+    <h2 style="text-align:center; margin-bottom:1.5rem;">🔥 Featured Products</h2>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:1.5rem;">
+        @foreach (var product in featuredProducts)
+        {
+            <div class="product-card glass-card" style="text-align:center; padding:1.5rem;">
+                <div style="font-size:3rem;">@product.Image</div>
+                <h3 style="margin:0.5rem 0 0.2rem;">@product.Name</h3>
+                <p style="font-weight:bold; color:#c084fc;">@product.Price.ToString("C")</p>
+                <a href="/Products" class="btn-primary" style="width:auto; padding:0.3rem 1.2rem; font-size:0.8rem;">View</a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Features & Why Choose Us -->
+<section class="features-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap:1.5rem; margin-bottom:3rem;">
+    <div class="feature-card glass-card" style="padding:1.5rem;">
+        <div style="font-size:2rem;">🔐</div>
+        <h3>Tamper‑Evident Ledger</h3>
+        <p>Every record is hashed with HMAC‑SHA256; any unauthorized change is instantly flagged.</p>
+    </div>
+    <div class="feature-card glass-card" style="padding:1.5rem;">
+        <div style="font-size:2rem;">⚡</div>
+        <h3>Blazing Fast</h3>
+        <p>Powered by .NET 10 and Redis caching, delivering sub‑millisecond response times.</p>
+    </div>
+    <div class="feature-card glass-card" style="padding:1.5rem;">
+        <div style="font-size:2rem;">🛡️</div>
+        <h3>JWT Authentication</h3>
+        <p>Stateless, secure bearer tokens protect all transaction endpoints out‑of‑the‑box.</p>
+    </div>
+    <div class="feature-card glass-card" style="padding:1.5rem;">
+        <div style="font-size:2rem;">📊</div>
+        <h3>Integrated Banking</h3>
+        <p>Built‑in wallet, transaction history, and real‑time balance updates.</p>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section glass-card" style="text-align:center; padding:2.5rem; background: rgba(124,58,237,0.15); border-color: rgba(168,85,247,0.4);">
+    <h2 style="margin:0 0 0.5rem;">Ready to Transform Your Business?</h2>
+    <p style="color:#d8cff0; margin-bottom:1.5rem;">Join thousands of users who trust E‑Commerce Rex for secure, scalable e‑commerce.</p>
+    <a href="/User/SignUp" class="btn-primary" style="width:auto; padding:0.8rem 3rem;">Sign Up Free</a>
+</section>
