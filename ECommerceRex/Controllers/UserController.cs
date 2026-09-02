@@ -183,6 +183,67 @@ public async Task<IActionResult> ExternalLoginCallback(string returnUrl = "/", s
 }
 
 [HttpGet]
+public async Task<IActionResult> TelegramCallback(string returnUrl = "/", [FromQuery] string? id = null, [FromQuery] string? first_name = null, [FromQuery] string? last_name = null, [FromQuery] string? username = null, [FromQuery] string? photo_url = null, [FromQuery] string? auth_date = null, [FromQuery] string? hash = null)
+{
+    // Verify the hash using your bot token
+    var botToken = _configuration["Authentication:Telegram:BotToken"];
+    var secretKey = System.Text.Encoding.UTF8.GetBytes(botToken);
+    using var hmac = new System.Security.Cryptography.HMACSHA256(secretKey);
+    // Construct check string as per Telegram docs
+    var checkString = $"auth_date={auth_date}\nfirst_name={first_name}\nid={id}\nlast_name={last_name}\nusername={username}";
+    // Note: order must be alphabetical (excluding hash)
+    var computedHash = Convert.ToHexString(hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(checkString))).ToLower();
+    if (computedHash != hash)
+    {
+        return BadRequest("Invalid hash");
+    }
+
+    // Check auth_date is recent (within 1 day)
+    if (!long.TryParse(auth_date, out var authDateLong)) return BadRequest();
+    var authDate = DateTimeOffset.FromUnixTimeSeconds(authDateLong).UtcDateTime;
+    if (DateTime.UtcNow - authDate > TimeSpan.FromDays(1))
+    {
+        return BadRequest("Auth data too old");
+    }
+
+    // Find or create user using Telegram ID (or username/email)
+    var telegramId = id; // use as unique identifier
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.TelegramId == telegramId); // you'd need to add TelegramId to User model
+    if (user == null)
+    {
+        var email = $"{telegramId}@telegram.user"; // or use username if exists
+        user = new User
+        {
+            Username = username ?? first_name ?? "TelegramUser",
+            Email = email,
+            PasswordHash = "EXTERNAL_AUTH",
+            Role = "User"
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+    }
+
+    // Issue JWT
+    var claims = new List<Claim>
+    {
+        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new(ClaimTypes.Email, user.Email),
+        new(ClaimTypes.Role, user.Role),
+        new(ClaimTypes.Name, user.Username)
+    };
+    var token = _jwtService.GenerateToken(claims);
+    Response.Cookies.Append("auth_token", token, new CookieOptions
+    {
+        HttpOnly = true,
+        Secure = false,
+        SameSite = SameSiteMode.Lax,
+        Expires = DateTime.UtcNow.AddHours(1)
+    });
+
+    return LocalRedirect(returnUrl);
+}
+
+[HttpGet]
 public IActionResult TelegramLogin(string returnUrl = "/")
 {
     // Render a view with the Telegram login widget
