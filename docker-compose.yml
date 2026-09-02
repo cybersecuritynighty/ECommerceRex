@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "123456"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      context: .
+      dockerfile: ECommerceRex/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlserver
+      - redis
+    volumes:
+      - ./ECommerceRex:/app/src   # optional for live reload
+volumes:
+  sql_data:
