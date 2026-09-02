@@ -120,6 +120,10 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
+builder.Services.AddHttpClient<IAIChatService, OpenAIChatService>();
+// If you want a mock (fallback) when no API key, you can register a mock service
+// builder.Services.AddScoped<IAIChatService, MockAIChatService>();
+
 // Existing JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(...) // keep your JWT config
