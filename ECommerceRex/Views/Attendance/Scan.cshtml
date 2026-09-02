@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Scan QR";
+}
+<div class="glass-card">
+    <h2>Scan Attendance QR</h2>
+    <form asp-action="CheckIn" method="post">
+        <div class="form-group">
+            <label>Scan Code</label>
+            <input name="scanCode" class="form-control" placeholder="Enter or scan code" />
+        </div>
+        <button type="submit" class="btn-primary">Check In</button>
+    </form>
+    <p>Or manually check out:</p>
+    <form asp-action="CheckOut" method="post">
+        <div class="form-group">
+            <label>Attendance ID</label>
+            <input name="attendanceId" class="form-control" type="number" />
+        </div>
+        <button type="submit" class="btn-primary">Check Out</button>
+    </form>
+</div>
