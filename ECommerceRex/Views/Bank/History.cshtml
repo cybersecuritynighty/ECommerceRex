@@ -1,0 +1,22 @@
+@model IEnumerable<ECommerceRex.Models.Transaction>
+@{
+    ViewData["Title"] = "Transaction History";
+}
+<div class="glass-card">
+    <h2>Transaction History</h2>
+    <table class="table">
+        <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Description</th><th>Status</th></tr></thead>
+        <tbody>
+            @foreach (var t in Model)
+            {
+                <tr>
+                    <td>@t.TransactionDate.ToLocalTime()</td>
+                    <td>@t.Type</td>
+                    <td>@t.Amount.ToString("C")</td>
+                    <td>@t.Description</td>
+                    <td>@t.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
