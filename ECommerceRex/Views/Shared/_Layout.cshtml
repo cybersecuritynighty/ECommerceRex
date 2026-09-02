@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - E‑Commerce Rex</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar glass-nav">
+            <div class="nav-container">
+                <a href="/" class="logo">🛒 E‑Commerce Rex</a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/Home/About">About</a></li>
+                    <li><a href="/Products">Products</a></li>
+                    <li><a href="/Bank">Bank</a></li>
+                    <li><a href="/Attendance">Attendance</a></li>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li><a href="/User">Profile</a></li>
+                        <li><a href="/Admin">Admin</a></li>
+                        <li><a href="/User/Logout">Logout</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="/User/Login">Login</a></li>
+                        <li><a href="/User/SignUp">Sign Up</a></li>
+                    }
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="main-container">
+        @RenderBody()
+    </main>
+    <footer class="mega-footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Platform</h4>
+                <ul>
+                    <li>Status: <span class="status">Operational</span></li>
+                    <li>Version: 1.0.0</li>
+                    <li>Environment: @Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Modules</h4>
+                <ul>
+                    <li>Products</li>
+                    <li>Banking</li>
+                    <li>Attendance</li>
+                    <li>Admin</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Security</h4>
+                <ul>
+                    <li>JWT Auth</li>
+                    <li>HMAC Ledger</li>
+                    <li>Redis Cache</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; @DateTime.Now.Year E‑Commerce Rex — Built with .NET 10
+        </div>
+    </footer>
+</body>
+</html>
