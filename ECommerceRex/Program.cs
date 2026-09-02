@@ -89,4 +89,30 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
+// Existing JWT authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(...) // keep your JWT config
+    // Add external providers
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        options.CallbackPath = "/signin-google"; // must match Google Console
+        options.SaveTokens = true;
+    })
+    .AddGitHub(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
+        options.CallbackPath = "/signin-github";
+        options.SaveTokens = true;
+        options.Scope.Add("user:email");
+    })
+    // Telegram – we'll use a custom scheme
+    .AddTelegram(options => // if we have a package
+    {
+        options.BotToken = builder.Configuration["Authentication:Telegram:BotToken"];
+        // Or use a custom handler
+    });
+
 app.Run();
