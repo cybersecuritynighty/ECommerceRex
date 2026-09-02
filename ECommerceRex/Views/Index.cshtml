@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Profile";
+}
+<div class="glass-card">
+    <h2>My Profile</h2>
+    <p><strong>Username:</strong> @User.Identity?.Name</p>
+    <p><strong>Email:</strong> @User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</p>
+    <p><strong>Role:</strong> @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</p>
+    <hr />
+    <a href="/Bank" class="btn-primary" style="display:inline-block; width:auto;">View Wallet</a>
+    <a href="/Attendance" class="btn-primary" style="display:inline-block; width:auto;">Attendance</a>
+</div>
