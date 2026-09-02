@@ -16,6 +16,13 @@ public class AdminController : Controller
         _context = context;
     }
 
+    builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+
+    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOnly")]
     public IActionResult Index()
     {
         // Show alerts for tampered entities (if any)
