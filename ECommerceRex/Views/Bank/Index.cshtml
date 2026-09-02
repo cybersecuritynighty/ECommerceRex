@@ -1,0 +1,21 @@
+@model ECommerceRex.Models.BankAccount
+@{
+    ViewData["Title"] = "Banking Dashboard";
+}
+<div class="glass-card">
+    <h2>My Bank Account</h2>
+    @if (Model != null)
+    {
+        <p><strong>Balance:</strong> @Model.Balance.ToString("C")</p>
+        <p><strong>Currency:</strong> @Model.Currency</p>
+    }
+    else
+    {
+        <p>No account found. Contact support.</p>
+    }
+    <div style="display:flex; gap:1rem; margin-top:1rem;">
+        <a href="/Bank/Wallet" class="btn-primary" style="width:auto;">Wallet</a>
+        <a href="/Bank/History" class="btn-primary" style="width:auto;">History</a>
+        <a href="/Bank/Account" class="btn-primary" style="width:auto;">Settings</a>
+    </div>
+</div>
