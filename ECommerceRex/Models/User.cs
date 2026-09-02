@@ -4,6 +4,8 @@ namespace ECommerceRex.Models;
 
 public class User : BaseEntity
 {
+    public string? TelegramId { get; set; }
+    
     [Required, MaxLength(100)]
     public string Username { get; set; } = string.Empty;
     [Required, EmailAddress]
