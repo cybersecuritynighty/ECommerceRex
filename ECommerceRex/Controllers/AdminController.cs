@@ -21,6 +21,16 @@ public class AdminController : Controller
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 });
 
+    app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 403 && !context.Response.HasStarted)
+    {
+        context.Request.Path = "/Home/AccessDenied";
+        await next();
+    }
+});
+
     [Authorize(Roles = "Admin")]
     [Authorize(Policy = "AdminOnly")]
     public IActionResult Index()
