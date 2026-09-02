@@ -1,0 +1,21 @@
+@model IEnumerable<ECommerceRex.Models.Attendance>
+@{
+    ViewData["Title"] = "Attendance";
+}
+<div class="glass-card">
+    <h2>My Attendance</h2>
+    <a href="/Attendance/Scan" class="btn-primary" style="display:inline-block; width:auto;">Scan QR</a>
+    <table class="table">
+        <thead><tr><th>Check‑In</th><th>Check‑Out</th><th>Scan Code</th></tr></thead>
+        <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.CheckInTime.ToLocalTime()</td>
+                    <td>@(a.CheckOutTime?.ToLocalTime()?.ToString() ?? "—")</td>
+                    <td>@a.ScanCode</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
