@@ -1,0 +1,9 @@
+@model ECommerceRex.Models.BankAccount
+@{
+    ViewData["Title"] = "Wallet";
+}
+<div class="glass-card">
+    <h2>My Wallet</h2>
+    <p>Current Balance: <strong>@Model?.Balance.ToString("C")</strong></p>
+    <!-- Add deposit/withdraw forms -->
+</div>
