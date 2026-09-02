@@ -63,6 +63,21 @@ builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true
 
 var app = builder.Build();
 
+// Custom error pages
+app.UseStatusCodePagesWithReExecute("/Home/Error/{0}"); // for status codes
+app.UseExceptionHandler("/Home/Error"); // for 500
+
+// Also handle 404 explicitly with a custom route
+app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
+    {
+        context.Request.Path = "/Home/NotFound";
+        await next();
+    }
+});
+
 // Middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
