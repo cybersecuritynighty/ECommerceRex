@@ -182,6 +182,14 @@ public async Task<IActionResult> ExternalLoginCallback(string returnUrl = "/", s
     return LocalRedirect(returnUrl);
 }
 
+[HttpGet]
+public IActionResult TelegramLogin(string returnUrl = "/")
+{
+    // Render a view with the Telegram login widget
+    ViewBag.ReturnUrl = returnUrl;
+    return View();
+}
+
     // Add this method to Controllers/UserController.cs
     [HttpPost]
     [Authorize]
