@@ -4,8 +4,19 @@ namespace ECommerceRex.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index() => View();
-    public IActionResult About() => View();
-    public IActionResult Product() => View();
-    public IActionResult Bank() => View();
+    public IActionResult Index() {
+        return View();
+    }
+    
+    public IActionResult About() {
+        return View();
+    }
+    
+    public IActionResult Product() {
+        return View();
+    }
+    
+    public IActionResult Bank() {
+        return View();
+    }
 }
