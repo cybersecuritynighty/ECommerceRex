@@ -107,6 +107,13 @@
         color: #b0a0c8;
     }
 </style>
+<!-- After the <h1> tag -->
+<div style="display:flex; justify-content:center; margin-bottom:1.5rem;">
+    <form asp-action="Search" asp-controller="Home" method="get" style="display:flex; gap:0.5rem; width:100%; max-width:500px;">
+        <input type="text" name="query" placeholder="Search products..." class="form-control" style="flex:1; border-radius:2rem;" />
+        <button type="submit" class="btn-primary" style="width:auto; border-radius:2rem; padding:0.5rem 1.5rem;">Search</button>
+    </form>
+</div>
 
 <div class="product-catalog">
     <h1 style="text-align:center; margin-bottom:1.5rem;">Our Products</h1>
