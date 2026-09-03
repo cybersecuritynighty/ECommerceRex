@@ -1,21 +1,103 @@
 @{
-    ViewData["Title"] = "Scan QR";
+    ViewData["Title"] = "Scan QR for Attendance";
 }
-<div class="glass-card">
-    <h2>Scan Attendance QR</h2>
+
+<div class="glass-card" style="max-width:600px; margin:0 auto;">
+    <h2>📸 Scan Attendance QR</h2>
+    <p style="color:#b0a0c8;">Point your camera at the QR code to check in instantly.</p>
+
+    <!-- QR Scanner Container -->
+    <div id="qr-reader" style="width:100%; max-width:400px; margin:1rem auto;"></div>
+    <div id="qr-result" style="text-align:center; margin:0.5rem 0; font-weight:bold; color:#c084fc;"></div>
+
+    <!-- Manual check-in form (fallback) -->
+    <hr style="border-color: rgba(168,85,247,0.2); margin:1.5rem 0;" />
+    <h4>Or enter code manually</h4>
     <form asp-action="CheckIn" method="post">
         <div class="form-group">
             <label>Scan Code</label>
-            <input name="scanCode" class="form-control" placeholder="Enter or scan code" />
+            <input name="scanCode" class="form-control" placeholder="Paste or type code" />
         </div>
         <button type="submit" class="btn-primary">Check In</button>
     </form>
-    <p>Or manually check out:</p>
+
+    <!-- Manual check-out -->
+    <hr style="border-color: rgba(168,85,247,0.2); margin:1.5rem 0;" />
+    <h4>Check Out</h4>
     <form asp-action="CheckOut" method="post">
         <div class="form-group">
             <label>Attendance ID</label>
-            <input name="attendanceId" class="form-control" type="number" />
+            <input name="attendanceId" class="form-control" type="number" placeholder="Enter attendance ID" />
         </div>
         <button type="submit" class="btn-primary">Check Out</button>
     </form>
+
+    <div style="margin-top:1rem; text-align:center;">
+        <a href="/Attendance" class="btn-secondary" style="display:inline-block; padding:0.5rem 1.5rem; background:transparent; border:1px solid rgba(168,85,247,0.3); border-radius:0.75rem; color:#c084fc; text-decoration:none;">Back to History</a>
+    </div>
 </div>
+
+@section Scripts {
+    <!-- Include QR scanner library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        // Wait for DOM ready
+        document.addEventListener('DOMContentLoaded', function () {
+            const qrReader = document.getElementById('qr-reader');
+            const resultDiv = document.getElementById('qr-result');
+
+            // Check if camera is supported
+            if (typeof Html5Qrcode === 'undefined') {
+                resultDiv.innerText = 'QR library not loaded.';
+                return;
+            }
+
+            const html5QrCode = new Html5Qrcode("qr-reader");
+
+            // Start scanning
+            html5QrCode.start(
+                { facingMode: "environment" },   // use rear camera
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onScanSuccess,
+                onScanError
+            ).catch(err => {
+                resultDiv.innerText = 'Unable to access camera: ' + err;
+                console.warn(err);
+            });
+
+            function onScanSuccess(decodedText, decodedResult) {
+                // Success - send to server
+                resultDiv.innerText = '✅ Scanned: ' + decodedText;
+                resultDiv.style.color = '#4ade80';
+
+                // Automatically submit to CheckIn
+                fetch('/Attendance/CheckIn', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'scanCode=' + encodeURIComponent(decodedText)
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert('Check-in successful! Code: ' + decodedText);
+                    // Optionally redirect to history
+                    window.location.href = '/Attendance';
+                })
+                .catch(err => {
+                    alert('Error during check-in: ' + err);
+                });
+            }
+
+            function onScanError(error) {
+                // ignore – keep scanning
+                // console.debug(error);
+            }
+
+            // Optional: stop scanning when navigating away (cleanup)
+            window.addEventListener('beforeunload', function () {
+                if (html5QrCode) {
+                    html5QrCode.stop().catch(console.warn);
+                }
+            });
+        });
+    </script>
+}
