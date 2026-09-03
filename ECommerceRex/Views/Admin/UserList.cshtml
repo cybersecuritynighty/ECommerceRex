@@ -1,6 +1,7 @@
 @model IEnumerable<ECommerceRex.Models.User>
 @{
     ViewData["Title"] = "User List";
+var error = TempData["Error"] as string;
 }
 <div class="glass-card">
     <h2>Registered Users</h2>
@@ -20,4 +21,45 @@
             }
         </tbody>
     </table>
+</div>
+
+
+<div class="glass-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:1rem;">
+        <h2>Registered Users</h2>
+        <a href="/Admin/UserCreate" class="btn-primary" style="width:auto; padding:0.4rem 1.2rem;">+ Add User</a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div style="background:rgba(248,113,113,0.15); padding:0.5rem 1rem; border-radius:0.5rem; color:#f87171; margin-bottom:1rem;">@error</div>
+    }
+
+    <div style="overflow-x:auto;">
+        <table class="table" style="width:100%; border-collapse:collapse; min-width:600px;">
+            <thead>
+                <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th style="text-align:center;">Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr style="border-bottom:1px solid rgba(168,85,247,0.08);">
+                        <td>@u.Id</td>
+                        <td>@u.Username</td>
+                        <td>@u.Email</td>
+                        <td><span class="status-badge" style="background:rgba(124,58,237,0.2); color:#c084fc; padding:0.2rem 0.8rem; border-radius:1rem; font-size:0.75rem;">@u.Role</span></td>
+                        <td style="text-align:center;">
+                            <div style="display:flex; gap:0.4rem; justify-content:center;">
+                                <a href="/Admin/UserEdit/@u.Id" class="btn-action" style="color:#fbbf24; text-decoration:none; padding:0.2rem 0.6rem; border:1px solid rgba(251,191,36,0.2); border-radius:0.3rem; font-size:0.75rem;">Edit</a>
+                                <form asp-action="UserDelete" method="post" style="display:inline;" onsubmit="return confirm('Delete user @u.Username ?');">
+                                    <input type="hidden" name="id" value="@u.Id" />
+                                    <button type="submit" class="btn-action" style="background:transparent; border:1px solid rgba(248,113,113,0.2); color:#f87171; padding:0.2rem 0.6rem; border-radius:0.3rem; font-size:0.75rem; cursor:pointer;">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
