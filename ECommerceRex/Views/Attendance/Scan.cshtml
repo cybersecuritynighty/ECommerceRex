@@ -37,6 +37,61 @@
     </div>
 </div>
 
+
+
+
+<script>
+// Face Recognition
+const faceVideo = document.getElementById('faceVideo');
+const faceCheckInBtn = document.getElementById('faceCheckInBtn');
+const faceResultDiv = document.getElementById('faceResult');
+
+// Access camera for face
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            faceVideo.srcObject = stream;
+            faceVideo.play();
+        })
+        .catch(err => {
+            faceResultDiv.innerText = 'Camera error: ' + err;
+            faceResultDiv.style.color = '#f87171';
+        });
+}
+
+faceCheckInBtn.addEventListener('click', function() {
+    // Capture image from faceVideo
+    const canvas = document.createElement('canvas');
+    canvas.width = faceVideo.videoWidth;
+    canvas.height = faceVideo.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(faceVideo, 0, 0);
+    const imageData = canvas.toDataURL('image/jpeg');
+
+    // Send to .NET API that calls Python service
+    fetch('/Attendance/FaceCheckIn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: imageData })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            faceResultDiv.innerText = '✅ Check-in successful for ' + data.username;
+            faceResultDiv.style.color = '#4ade80';
+            // Optionally redirect after a delay
+            setTimeout(() => { window.location.href = '/Attendance'; }, 2000);
+        } else {
+            faceResultDiv.innerText = '❌ ' + data.error;
+            faceResultDiv.style.color = '#f87171';
+        }
+    })
+    .catch(err => {
+        faceResultDiv.innerText = 'Error: ' + err;
+        faceResultDiv.style.color = '#f87171';
+    });
+});
+</script>
 @section Scripts {
     <!-- Include QR scanner library -->
     <script src="https://unpkg.com/html5-qrcode"></script>
