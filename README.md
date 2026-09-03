@@ -85,15 +85,15 @@ cd ECommerceRex
 docker-compose up -d
 ```
 
-- This will:
+This will:
 
-Start SQL Server 2022 (port 1433)
+- Start SQL Server 2022 (port 1433)
 
-Start Redis (port 6379)
+- Start Redis (port 6379)
 
-Build and run the .NET app (port 5000)
+- Build and run the .NET app (port 5000)
 
-Wait a few seconds for the database to initialise.
+- Wait a few seconds for the database to initialise.
 
 ### 4. Access the application
 
@@ -139,14 +139,13 @@ ECommerceRex/
 ├── context.md            # Architectural blueprint and summary
 ├── docker-compose.yml    # Docker services orchestration
 ├── Dockerfile            # Multi‑stage build for the app
-├── src/
-│   └── ECommerceRex/
-│       ├── Controllers/  # MVC controllers
-│       ├── Data/         # DbContext and HMAC interceptor
-│       ├── Models/       # Entities and ViewModels
-│       ├── Services/     # JWT, HMAC, Redis, AI Chat
-│       ├── Views/        # Razor views (glassmorphism UI)
-│       └── wwwroot/      # Static assets (CSS)
+├── ECommerceRex/
+│   ├── Controllers/      # MVC controllers
+│   ├── Data/             # DbContext and HMAC interceptor
+│   ├── Models/           # Entities and ViewModels
+│   ├── Services/         # JWT, HMAC, Redis, AI Chat
+│   ├── Views/            # Razor views (glassmorphism UI)
+│   └── wwwroot/          # Static assets (CSS)
 └── README.md             # This file
 ```
 
