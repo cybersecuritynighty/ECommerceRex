@@ -4,8 +4,9 @@ namespace ECommerceRex.Models;
 
 public class User : BaseEntity
 {
+    public int UserId { get; set; }
     public string? TelegramId { get; set; }
-    
+    public string? FaceEmbeddings { get; set; } // JSON array of float[] (or multiple encodings)
     [Required, MaxLength(100)]
     public string Username { get; set; } = string.Empty;
     [Required, EmailAddress]
