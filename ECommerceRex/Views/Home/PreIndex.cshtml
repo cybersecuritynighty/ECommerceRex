@@ -1,0 +1,401 @@
+@{
+    ViewData["Title"] = "Home – E‑Commerce Rex";
+    // Data for stats and featured products (can be moved to ViewBag later)
+    var productCount = 125;
+    var userCount = 3420;
+    var transactionCount = 15789;
+    var featuredProducts = new List<dynamic>
+    {
+        new { Name = "Premium Headphones", Price = 199.99m, Image = "🎧" },
+        new { Name = "Smart Watch Pro", Price = 349.50m, Image = "⌚" },
+        new { Name = "Wireless Earbuds", Price = 89.99m, Image = "🎵" },
+        new { Name = "4K Action Camera", Price = 299.00m, Image = "📷" }
+    };
+}
+
+<style>
+    /* --- Carousel Styles --- */
+    .carousel-container {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: 2rem auto;
+        border-radius: 1.25rem;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .carousel-slides {
+        display: flex;
+        transition: transform 0.6s ease-in-out;
+    }
+
+    .carousel-slide {
+        min-width: 100%;
+        height: 400px;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 2rem 4rem;
+        position: relative;
+    }
+
+    .carousel-slide::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(6, 2, 12, 0.5);
+        backdrop-filter: blur(2px);
+        z-index: 1;
+    }
+
+    .slide-content {
+        position: relative;
+        z-index: 2;
+        max-width: 500px;
+        color: #fff;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .slide-content h2 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #c084fc, #d946ef);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+    }
+
+    .slide-content p {
+        font-size: 1.2rem;
+        margin-bottom: 1.2rem;
+        color: #e0d7f0;
+        -webkit-text-fill-color: #e0d7f0;
+    }
+
+    .slide-content .btn-primary {
+        display: inline-block;
+        width: auto;
+        padding: 0.7rem 2rem;
+        background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        border-radius: 2rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: #fff;
+        transition: 0.2s;
+        border: none;
+    }
+
+    .slide-content .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.5);
+    }
+
+    /* Carousel controls */
+    .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(24, 15, 41, 0.7);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        color: #c084fc;
+        font-size: 2rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+    }
+
+    .carousel-btn:hover {
+        background: rgba(124, 58, 237, 0.4);
+        border-color: #c084fc;
+    }
+
+    .carousel-btn.prev { left: 16px; }
+    .carousel-btn.next { right: 16px; }
+
+    /* Dots */
+    .carousel-dots {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+    }
+
+    .carousel-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(168, 85, 247, 0.3);
+        border: 2px solid rgba(168, 85, 247, 0.1);
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .carousel-dot.active {
+        background: #c084fc;
+        border-color: #c084fc;
+        box-shadow: 0 0 12px rgba(124, 58, 237, 0.6);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .carousel-slide {
+            height: 300px;
+            padding: 1.5rem 2rem;
+        }
+        .slide-content h2 {
+            font-size: 2rem;
+        }
+        .slide-content p {
+            font-size: 1rem;
+        }
+        .carousel-btn {
+            width: 36px;
+            height: 36px;
+            font-size: 1.4rem;
+        }
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .carousel-slide {
+            height: 220px;
+            padding: 1rem;
+        }
+        .slide-content h2 {
+            font-size: 1.5rem;
+        }
+        .slide-content p {
+            font-size: 0.85rem;
+            margin-bottom: 0.6rem;
+        }
+        .slide-content .btn-primary {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+        }
+        .carousel-btn {
+            width: 28px;
+            height: 28px;
+            font-size: 1rem;
+        }
+        .carousel-btn.prev { left: 8px; }
+        .carousel-btn.next { right: 8px; }
+    }
+</style>
+
+<!-- ===== HERO SECTION (unchanged) ===== -->
+<section class="hero-section glass-card" style="text-align:center; padding:4rem 2rem; margin-bottom:1rem; position:relative; overflow:hidden;">
+    <div class="hero-glow" style="position:absolute; top:-50%; left:-30%; width:80%; height:80%; background:radial-gradient(circle, rgba(124,58,237,0.2), transparent 70%); pointer-events:none;"></div>
+    <h1 style="font-size:3.5rem; font-weight:800; background:linear-gradient(135deg, #c084fc, #d946ef); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem;">
+        Welcome to E‑Commerce Rex
+    </h1>
+    <p style="font-size:1.2rem; color:#d8cff0; max-width:600px; margin:0 auto 2rem;">
+        The next‑gen platform with <strong>HMAC‑protected ledger</strong>, <strong>JWT security</strong>, and a stunning glassmorphism UI.
+    </p>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="/Products" class="btn-primary" style="width:auto; padding:0.8rem 2.5rem;">Browse Products</a>
+        <a href="/User/SignUp" class="btn-secondary" style="background:transparent; border:1px solid rgba(168,85,247,0.5); padding:0.8rem 2.5rem; border-radius:0.75rem; color:#c084fc; text-decoration:none; transition:0.2s;">Get Started</a>
+    </div>
+</section>
+
+<!-- ===== CAROUSEL BANNER ===== -->
+<div class="carousel-container glass-card" style="padding:0; overflow:hidden; background:transparent; border:none; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+    <div class="carousel-slides" id="carouselSlides">
+        <!-- Slide 1 -->
+        <div class="carousel-slide" style="background-image: url('https://picsum.photos/seed/ecom1/1200/500');">
+            <div class="slide-content">
+                <h2>Summer Sale</h2>
+                <p>Up to 50% off on all electronics. Limited time offer!</p>
+                <a href="/Products" class="btn-primary">Shop Now</a>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="carousel-slide" style="background-image: url('https://picsum.photos/seed/ecom2/1200/500');">
+            <div class="slide-content">
+                <h2>New Collection</h2>
+                <p>Discover the latest arrivals in fashion and accessories.</p>
+                <a href="/Products" class="btn-primary">Explore</a>
+            </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="carousel-slide" style="background-image: url('https://picsum.photos/seed/ecom3/1200/500');">
+            <div class="slide-content">
+                <h2>Free Shipping</h2>
+                <p>On orders over $100 – no code needed.</p>
+                <a href="/Products" class="btn-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button class="carousel-btn prev" id="prevBtn">‹</button>
+    <button class="carousel-btn next" id="nextBtn">›</button>
+
+    <!-- Dots -->
+    <div class="carousel-dots" id="dotsContainer">
+        <span class="carousel-dot active" data-index="0"></span>
+        <span class="carousel-dot" data-index="1"></span>
+        <span class="carousel-dot" data-index="2"></span>
+    </div>
+</div>
+
+<!-- ===== STATS & FEATURED PRODUCTS (unchanged) ===== -->
+<div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:1.5rem; margin-bottom:3rem;">
+    <div class="stat-card glass-card" style="text-align:center; padding:1.5rem;">
+        <div style="font-size:2.5rem;">📦</div>
+        <div style="font-size:2rem; font-weight:700; color:#c084fc;">@productCount</div>
+        <div style="color:#b0a0c8;">Products</div>
+    </div>
+    <div class="stat-card glass-card" style="text-align:center; padding:1.5rem;">
+        <div style="font-size:2.5rem;">👥</div>
+        <div style="font-size:2rem; font-weight:700; color:#c084fc;">@userCount</div>
+        <div style="color:#b0a0c8;">Active Users</div>
+    </div>
+    <div class="stat-card glass-card" style="text-align:center; padding:1.5rem;">
+        <div style="font-size:2.5rem;">💳</div>
+        <div style="font-size:2rem; font-weight:700; color:#c084fc;">@transactionCount</div>
+        <div style="color:#b0a0c8;">Transactions</div>
+    </div>
+    <div class="stat-card glass-card" style="text-align:center; padding:1.5rem;">
+        <div style="font-size:2.5rem;">⚡</div>
+        <div style="font-size:2rem; font-weight:700; color:#c084fc;">99.9%</div>
+        <div style="color:#b0a0c8;">Uptime</div>
+    </div>
+</div>
+
+<section style="margin-bottom:3rem;">
+    <h2 style="text-align:center; margin-bottom:1.5rem;">🔥 Featured Products</h2>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:1.5rem;">
+        @foreach (var product in featuredProducts)
+        {
+            <div class="product-card glass-card" style="text-align:center; padding:1.5rem;">
+                <div style="font-size:3rem;">@product.Image</div>
+                <h3 style="margin:0.5rem 0 0.2rem;">@product.Name</h3>
+                <p style="font-weight:bold; color:#c084fc;">@product.Price.ToString("C")</p>
+                <a href="/Products" class="btn-primary" style="width:auto; padding:0.3rem 1.2rem; font-size:0.8rem;">View</a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ===== FEATURES & CTA (unchanged) ===== -->
+<section class="features-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap:1.5rem; margin-bottom:3rem;">
+    <div class="feature-card glass-card" style="padding:1.5rem;">
+        <div style="font-size:2rem;">🔐</div>
+        <h3>Tamper‑Evident Ledger</h3>
+        <p>Every record is hashed with HMAC‑SHA256; any unauthorized change is instantly flagged.</p>
+    </div>
+    <div class="feature-card glass-card" style="padding:1.5rem;">
+        <div style="font-size:2rem;">⚡</div>
+        <h3>Blazing Fast</h3>
+        <p>Powered by .NET 10 and Redis caching, delivering sub‑millisecond response times.</p>
+    </div>
+    <div class="feature-card glass-card" style="padding:1.5rem;">
+        <div style="font-size:2rem;">🛡️</div>
+        <h3>JWT Authentication</h3>
+        <p>Stateless, secure bearer tokens protect all transaction endpoints out‑of‑the‑box.</p>
+    </div>
+    <div class="feature-card glass-card" style="padding:1.5rem;">
+        <div style="font-size:2rem;">📊</div>
+        <h3>Integrated Banking</h3>
+        <p>Built‑in wallet, transaction history, and real‑time balance updates.</p>
+    </div>
+</section>
+
+<section class="cta-section glass-card" style="text-align:center; padding:2.5rem; background: rgba(124,58,237,0.15); border-color: rgba(168,85,247,0.4);">
+    <h2 style="margin:0 0 0.5rem;">Ready to Transform Your Business?</h2>
+    <p style="color:#d8cff0; margin-bottom:1.5rem;">Join thousands of users who trust E‑Commerce Rex for secure, scalable e‑commerce.</p>
+    <a href="/User/SignUp" class="btn-primary" style="width:auto; padding:0.8rem 3rem;">Sign Up Free</a>
+</section>
+
+<!-- ===== CAROUSEL JAVASCRIPT ===== -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelector('.carousel-slides');
+        const slideItems = document.querySelectorAll('.carousel-slide');
+        const dots = document.querySelectorAll('.carousel-dot');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentIndex = 0;
+        let autoSlideInterval;
+
+        function goToSlide(index) {
+            if (index < 0) index = slideItems.length - 1;
+            if (index >= slideItems.length) index = 0;
+            currentIndex = index;
+            slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+            // Update dots
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
+            });
+        }
+
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+
+        function startAutoSlide() {
+            if (autoSlideInterval) clearInterval(autoSlideInterval);
+            autoSlideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            stopAutoSlide();
+            prevSlide();
+            startAutoSlide();
+        });
+
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            stopAutoSlide();
+            nextSlide();
+            startAutoSlide();
+        });
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                stopAutoSlide();
+                goToSlide(index);
+                startAutoSlide();
+            });
+        });
+
+        // Pause on hover
+        const container = document.querySelector('.carousel-container');
+        container.addEventListener('mouseenter', stopAutoSlide);
+        container.addEventListener('mouseleave', startAutoSlide);
+
+        // Start
+        goToSlide(0);
+        startAutoSlide();
+    });
+</script>
