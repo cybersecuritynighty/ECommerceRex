@@ -1,3 +1,4 @@
+@model IEnumerable<ECommerceRex.Models.Product>
 @{
     ViewData["Title"] = "Product CRUD";
 }
@@ -6,3 +7,40 @@
     <p>Add, edit, or remove products from inventory.</p>
     <!-- Form placeholders -->
 </div>
+
+<div class="products-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h2 style="margin:0;">📦 Product Catalog</h2>
+    <a href="/Products/CRUD" class="btn-primary" style="width:auto; padding:0.5rem 1.5rem;">+ Add New</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="glass-card" style="text-align:center; padding:3rem;">
+        <p>No products available. Click <strong>Add New</strong> to create one.</p>
+    </div>
+}
+else
+{
+    <div class="product-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:1.5rem;">
+        @foreach (var product in Model)
+        {
+            <div class="product-card glass-card" style="padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                    <h3 style="margin-top:0; color:#c084fc;">@product.Name</h3>
+                    <p style="font-size:0.9rem; color:#b0a0c8;">@(product.Description ?? "No description")</p>
+                    <p style="font-weight:bold; font-size:1.2rem;">@product.Price.ToString("C")</p>
+                    <p><span style="color:#a0a0b0;">Stock:</span> @product.StockQuantity</p>
+                    <p><span style="color:#a0a0b0;">Category:</span> @(product.Category ?? "Uncategorized")</p>
+                </div>
+                <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:flex-end;">
+                    <a href="/Products/CRUD?id=@product.Id" class="btn-primary" style="padding:0.25rem 0.8rem; font-size:0.8rem; width:auto;">Edit</a>
+                    <form asp-action="Delete" asp-controller="Products" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@product.Id" />
+                        <button type="submit" class="btn-danger" style="background:#dc2626; border:none; padding:0.25rem 0.8rem; border-radius:0.5rem; color:#fff; cursor:pointer; font-size:0.8rem;">Delete</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}
+
