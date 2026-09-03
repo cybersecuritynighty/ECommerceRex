@@ -108,6 +108,12 @@ if (!app.Environment.IsDevelopment())
     // app.UseHsts(); // Not used per spec
 }
 
+// Inside the scope after EnsureCreated()
+if (!db.Users.Any())
+{
+    // Seed admin and products
+}
+
 // app.UseHttpsRedirection(); // Disabled – plain HTTP only
 app.UseStaticFiles();
 app.UseRouting();
