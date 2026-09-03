@@ -1,5 +1,18 @@
 version: '3.8'
 services:
+  # ... existing services (sqlserver, redis, app) ...
+
+  faceservice:
+    build:
+      context: ./face_service
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+    volumes:
+      - ./face_service:/app
+    restart: unless-stopped
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
