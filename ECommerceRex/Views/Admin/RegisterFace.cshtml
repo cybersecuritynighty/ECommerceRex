@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Register Face";
+    var userId = ViewBag.UserId;
+}
+<div class="glass-card" style="max-width:500px; margin:2rem auto;">
+    <h2>Register Face for User @userId</h2>
+    <p>Click the button below to capture a photo from your camera.</p>
+    <video id="video" width="400" height="300" autoplay style="border-radius:1rem; border:1px solid rgba(168,85,247,0.3);"></video>
+    <div style="margin-top:1rem;">
+        <button id="captureBtn" class="btn-primary" style="width:auto;">📸 Capture & Register</button>
+        <a href="/Admin/UserList" class="btn-secondary" style="display:inline-block; margin-left:1rem;">Cancel</a>
+    </div>
+    <div id="result" style="margin-top:1rem;"></div>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const captureBtn = document.getElementById('captureBtn');
+    const resultDiv = document.getElementById('result');
+
+    // Access camera
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(err => {
+                resultDiv.innerText = 'Camera access denied: ' + err;
+                resultDiv.style.color = '#f87171';
+            });
+    } else {
+        resultDiv.innerText = 'Camera not supported';
+    }
+
+    captureBtn.addEventListener('click', function() {
+        // Capture frame from video
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+        const imageData = canvas.toDataURL('image/jpeg'); // base64 with prefix
+
+        // Send to server
+        fetch('/Admin/RegisterFace?userId=@userId', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: imageData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                resultDiv.innerText = '✅ Face registered successfully!';
+                resultDiv.style.color = '#4ade80';
+            } else {
+                resultDiv.innerText = '❌ Registration failed.';
+                resultDiv.style.color = '#f87171';
+            }
+        })
+        .catch(err => {
+            resultDiv.innerText = 'Error: ' + err;
+            resultDiv.style.color = '#f87171';
+        });
+    });
+</script>
