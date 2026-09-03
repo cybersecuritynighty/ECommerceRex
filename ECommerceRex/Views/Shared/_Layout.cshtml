@@ -16,6 +16,14 @@
                     <li><a href="/Home/About">About</a></li>
                     <li><a href="/Products">Products</a></li>
                     <li><a href="/Bank">Bank</a></li>
+                    <li style="position:relative;">
+    <form asp-action="Search" asp-controller="Home" method="get" style="display:flex; align-items:center; gap:0.3rem;">
+        <input type="text" name="query" placeholder="Search products..." 
+               style="background:rgba(255,255,255,0.08); border:1px solid rgba(168,85,247,0.3); border-radius:2rem; padding:0.3rem 1rem; color:#e0d7f0; width:160px; transition:width 0.3s; font-size:0.85rem;" 
+               onfocus="this.style.width='220px';" onblur="this.style.width='160px';" />
+        <button type="submit" style="background:transparent; border:none; color:#c084fc; cursor:pointer; font-size:1.1rem;">🔍</button>
+    </form>
+</li>
                     <li><a href="/AIChat">🤖 AI Chat</a></li>
                     <li><a href="/Attendance">Attendance</a></li>
                     @if (User.Identity?.IsAuthenticated == true)
