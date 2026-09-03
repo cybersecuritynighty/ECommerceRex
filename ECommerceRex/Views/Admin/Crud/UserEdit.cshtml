@@ -1,0 +1,40 @@
+@model ECommerceRex.Models.ViewModels.UserEditViewModel
+@{
+    ViewData["Title"] = "Edit User";
+}
+<div class="glass-card" style="max-width:500px; margin:0 auto;">
+    <h2>Edit User</h2>
+    <form asp-action="UserEdit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Username"></label>
+            <input asp-for="Username" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Password">Password <span style="color:#b0a0c8;">(leave blank to keep current)</span></label>
+            <input asp-for="Password" class="form-control" type="password" />
+        </div>
+        <div class="form-group">
+            <label asp-for="ConfirmPassword"></label>
+            <input asp-for="ConfirmPassword" class="form-control" type="password" />
+        </div>
+        <div class="form-group">
+            <label asp-for="FullName"></label>
+            <input asp-for="FullName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Role"></label>
+            <select asp-for="Role" class="form-control">
+                <option value="User">User</option>
+                <option value="Admin">Admin</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-primary">Save</button>
+        <a href="/Admin/UserList" class="btn-secondary" style="display:inline-block; margin-left:1rem;">Cancel</a>
+    </form>
+</div>
