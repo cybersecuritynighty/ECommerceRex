@@ -24,6 +24,42 @@ public class HomeController : Controller
     public IActionResult Product() {
         return View();
     }
+
+    // GET: /Home/Product
+    public async Task<IActionResult> Product(string? category, string? brand)
+    {
+        var products = _context.Products.AsQueryable();
+
+        // Category filter (case-insensitive)
+        if (!string.IsNullOrEmpty(category) && category != "All")
+        {
+            products = products.Where(p => p.Category != null && p.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Brand filter (we'll map to Supplier or a custom property; here we use Supplier as brand)
+        if (!string.IsNullOrEmpty(brand) && brand != "All")
+        {
+            products = products.Where(p => p.Supplier != null && p.Supplier.Equals(brand, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var productList = await products.ToListAsync();
+
+        // Get distinct categories and brands for navigation
+        ViewBag.Categories = await _context.Products.Select(p => p.Category).Distinct().Where(c => c != null).ToListAsync();
+        ViewBag.Brands = await _context.Products.Select(p => p.Supplier).Distinct().Where(b => b != null).ToListAsync();
+        ViewBag.SelectedCategory = category;
+        ViewBag.SelectedBrand = brand;
+
+        return View(productList);
+    }
+
+    // GET: /Home/ProductDetails/{id}
+    public async Task<IActionResult> ProductDetails(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null) return NotFound();
+        return View(product);
+    }
     
     public IActionResult Bank() {
         return View();
