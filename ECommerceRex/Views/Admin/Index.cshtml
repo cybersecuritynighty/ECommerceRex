@@ -1,16 +1,319 @@
 @{
     ViewData["Title"] = "Admin Dashboard";
+    // Sample data – in production, fetch from database
+    var firstReplyAvg = "30h 15min";
+    var fullResolveAvg = "22h 40min";
+    var messagesChange = -20;
+    var emailsChange = 33;
+
+    // Tickets created vs solved (last 7 days)
+    var days = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+    var createdData = new[] { 45, 60, 55, 68, 50, 42, 30 };
+    var solvedData = new[] { 30, 45, 40, 55, 48, 35, 28 };
+    var maxTickets = 68;
+
+    // Tickets status distribution
+    var statusLabels = new[] { "Created", "Opened", "Responded", "Solved", "Other", "Deleted" };
+    var statusValues = new[] { 120, 80, 65, 150, 30, 10 };
+
+    // New vs Returned tickets per category
+    var categories = new[] { "Sales", "Setup", "Bug", "Features" };
+    var newTickets = new[] { 45, 30, 25, 50 };
+    var returnedTickets = new[] { 15, 10, 8, 12 };
+    var totalReturned = 1200;
+    var newPercentage = 62.8;
+    var returnedPercentage = 39.2;
 }
-<div class="glass-card">
-    <h2>Admin Panel</h2>
-    <p>Welcome, @User.Identity?.Name</p>
-    <div class="admin-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap:1rem;">
-        <a href="/Admin/UserList" class="btn-primary" style="text-align:center;">User List</a>
-        <a href="/Admin/ProdList" class="btn-primary" style="text-align:center;">Products</a>
-        <a href="/Admin/CRM" class="btn-primary" style="text-align:center;">CRM</a>
+
+@section Styles {
+    <style>
+        .dashboard-stat {
+            text-align: center;
+            padding: 1.2rem 0.5rem;
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #c084fc;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #b0a0c8;
+        }
+        .stat-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .stat-change.positive { color: #4ade80; }
+        .stat-change.negative { color: #f87171; }
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        .chart-container.pie {
+            height: 180px;
+        }
+        .dashboard-card {
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .dashboard-card h3 {
+            margin-top: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #c4b5e0;
+            letter-spacing: 0.5px;
+        }
+        .ticket-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .ticket-summary .summary-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 1rem;
+        }
+        .summary-item .number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #c084fc;
+        }
+        .summary-item .label {
+            font-size: 0.8rem;
+            color: #b0a0c8;
+        }
+        .btn-download {
+            background: rgba(124,58,237,0.2);
+            border: 1px solid rgba(168,85,247,0.3);
+            color: #c084fc;
+            padding: 0.4rem 1.2rem;
+            border-radius: 1.5rem;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-download:hover {
+            background: rgba(124,58,237,0.4);
+            border-color: #c084fc;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ticket-category-bars {
+            margin-top: 0.5rem;
+        }
+        .category-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+        .category-label {
+            width: 60px;
+            font-size: 0.8rem;
+            color: #d8cff0;
+        }
+        .category-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: rgba(168,85,247,0.15);
+            border-radius: 4px;
+            margin: 0 0.5rem;
+            overflow: hidden;
+        }
+        .category-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #7c3aed, #c084fc);
+        }
+        .category-values {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #b0a0c8;
+            min-width: 60px;
+            justify-content: flex-end;
+        }
+        .category-values .new { color: #4ade80; }
+        .category-values .returned { color: #fbbf24; }
+    </style>
+}
+
+<div class="admin-dashboard">
+    <!-- Top stats row -->
+    <div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+        <div class="glass-card dashboard-stat">
+            <div class="stat-number">@firstReplyAvg</div>
+            <div class="stat-label">Avg First Reply Time</div>
+        </div>
+        <div class="glass-card dashboard-stat">
+            <div class="stat-number">@fullResolveAvg</div>
+            <div class="stat-label">Avg Full Resolve Time</div>
+        </div>
+        <div class="glass-card dashboard-stat">
+            <div class="stat-number">1,240</div>
+            <div class="stat-label">Messages</div>
+            <div class="stat-change @(messagesChange < 0 ? "negative" : "positive")">@messagesChange%</div>
+        </div>
+        <div class="glass-card dashboard-stat">
+            <div class="stat-number">340</div>
+            <div class="stat-label">Emails</div>
+            <div class="stat-change positive">+@emailsChange%</div>
+        </div>
     </div>
-    @if (ViewBag.TamperAlert == true)
-    {
-        <div class="alert alert-danger">⚠️ Tampered records detected!</div>
-    }
+
+    <!-- First Reply & Full Resolve Time (bar chart) -->
+    <div class="glass-card dashboard-card">
+        <h3>First Reply and Full Resolve Time</h3>
+        <div class="chart-container">
+            <canvas id="resolveTimeChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Tickets Created vs Solved (bar chart) -->
+    <div class="glass-card dashboard-card">
+        <div class="flex-between">
+            <h3>Tickets Created vs Tickets Solved</h3>
+            <span style="color:#b0a0c8; font-size:0.8rem;">Max = @maxTickets</span>
+        </div>
+        <div class="chart-container">
+            <canvas id="ticketsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Two-column: Status pie + New vs Returned bars -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+        <!-- Tickets Status (donut) -->
+        <div class="glass-card dashboard-card">
+            <h3>Tickets Status</h3>
+            <div class="chart-container pie">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- New Tickets vs Returned Tickets per category -->
+        <div class="glass-card dashboard-card">
+            <h3>New Tickets vs Returned Tickets</h3>
+            <div class="ticket-category-bars">
+                @for (int i = 0; i < categories.Length; i++)
+                {
+                    var maxVal = Math.Max(newTickets[i], returnedTickets[i]);
+                    var newPercent = maxVal > 0 ? (newTickets[i] * 100 / maxVal) : 0;
+                    var retPercent = maxVal > 0 ? (returnedTickets[i] * 100 / maxVal) : 0;
+                    <div class="category-row">
+                        <span class="category-label">@categories[i]</span>
+                        <div class="category-bar-bg">
+                            <div class="category-bar-fill" style="width:@newPercent%;"></div>
+                        </div>
+                        <div class="category-values">
+                            <span class="new">@newTickets[i]</span>
+                            <span class="returned">@returnedTickets[i]</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer summary: Returned Tickets, New vs Returned percentage, download -->
+    <div class="glass-card dashboard-card">
+        <div class="ticket-summary">
+            <div class="summary-item">
+                <span class="number">@totalReturned</span>
+                <span class="label">Returned Tickets</span>
+            </div>
+            <div class="summary-item">
+                <span class="number">@newPercentage%</span>
+                <span class="label">New Tickets</span>
+            </div>
+            <div class="summary-item">
+                <span class="number">@returnedPercentage%</span>
+                <span class="label">Returned Tickets</span>
+            </div>
+            <div class="summary-item">
+                <a href="#" class="btn-download">📥 Full Tickets Report</a>
+            </div>
+            <div class="summary-item">
+                <a href="#" style="color:#c084fc; text-decoration:none; font-weight:500;">View full statement →</a>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ----- First Reply & Full Resolve Time (bar) -----
+            const ctx1 = document.getElementById('resolveTimeChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(days)),
+                    datasets: [
+                        { label: 'First Reply (days)', data: [0.4, 0.6, 0.3, 0.5, 0.7, 0.4, 0.2], backgroundColor: 'rgba(124,58,237,0.5)' },
+                        { label: 'Full Resolve (days)', data: [2.5, 2.1, 2.8, 2.0, 2.3, 2.6, 1.8], backgroundColor: 'rgba(219,39,119,0.5)' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#d8cff0' } } },
+                    scales: {
+                        x: { ticks: { color: '#b0a0c8' }, grid: { color: 'rgba(168,85,247,0.1)' } },
+                        y: { ticks: { color: '#b0a0c8' }, grid: { color: 'rgba(168,85,247,0.1)' } }
+                    }
+                }
+            });
+
+            // ----- Tickets Created vs Solved (bar) -----
+            const ctx2 = document.getElementById('ticketsChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(days)),
+                    datasets: [
+                        { label: 'Created', data: @Html.Raw(Json.Serialize(createdData)), backgroundColor: 'rgba(124,58,237,0.6)' },
+                        { label: 'Solved', data: @Html.Raw(Json.Serialize(solvedData)), backgroundColor: 'rgba(74,222,128,0.6)' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#d8cff0' } } },
+                    scales: {
+                        x: { ticks: { color: '#b0a0c8' }, grid: { color: 'rgba(168,85,247,0.1)' } },
+                        y: { ticks: { color: '#b0a0c8' }, grid: { color: 'rgba(168,85,247,0.1)' }, beginAtZero: true }
+                    }
+                }
+            });
+
+            // ----- Tickets Status (donut) -----
+            const ctx3 = document.getElementById('statusChart').getContext('2d');
+            new Chart(ctx3, {
+                type: 'doughnut',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(statusLabels)),
+                    datasets: [{
+                        data: @Html.Raw(Json.Serialize(statusValues)),
+                        backgroundColor: ['#7c3aed', '#c084fc', '#8b5cf6', '#4ade80', '#fbbf24', '#f87171'],
+                        borderColor: 'transparent'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#d8cff0', boxWidth: 12, padding: 8 } }
+                    },
+                    cutout: '70%'
+                }
+            });
+        });
+    </script>
+}
