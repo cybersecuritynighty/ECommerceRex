@@ -34,3 +34,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+document.addEventListener('keydown', function (e) {
+    const tag = e.target.tagName.toLowerCase();
+    // Ignore if focused on input, textarea, or contenteditable
+    if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) {
+        return;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        window.location.href = '/Home/Product';
+    }
+});
