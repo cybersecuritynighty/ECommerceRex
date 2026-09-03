@@ -151,8 +151,8 @@ ECommerceRex/
 │ └── AIChat/
 │ └── Index.cshtml (chat UI)
 └── wwwroot/
-└── css/
-└── site.css (glassmorphism + dark purple design)
+| └── css/
+| | └── site.css (glassmorphism + dark purple design)
 ```
 
 ## ⚙️ Configuration Summary (`appsettings.json`)
