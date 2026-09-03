@@ -25,6 +25,23 @@ public class HomeController : Controller
         return View();
     }
 
+
+    // GET: /Home/Search
+public async Task<IActionResult> Search(string? query)
+{
+    ViewBag.Query = query;
+    if (string.IsNullOrWhiteSpace(query))
+    {
+        return View(new List<Product>());
+    }
+
+    var products = await _context.Products
+        .Where(p => p.Name.Contains(query) || (p.Description != null && p.Description.Contains(query)))
+        .ToListAsync();
+
+    return View(products);
+}
+
     // GET: /Home/Product
     public async Task<IActionResult> Product(string? category, string? brand)
     {
