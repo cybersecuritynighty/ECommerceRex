@@ -51,7 +51,7 @@
 ### 1. Clone or download the project
 
 ```bash
-git clone https://github.com/your-org/ECommerceRex.git
+git clone https://github.com/cybersecuritynighty/ECommerceRex.git
 cd ECommerceRex
 ```
 
