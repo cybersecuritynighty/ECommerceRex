@@ -128,6 +128,11 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
+builder.Services.AddHttpClient<IFaceRecognitionService, FaceRecognitionService>(client =>
+{
+    client.BaseAddress = new Uri("http://faceservice:5001");
+});
+
 builder.Services.AddHttpClient<IAIChatService, OpenAIChatService>();
 // If you want a mock (fallback) when no API key, you can register a mock service
 // builder.Services.AddScoped<IAIChatService, MockAIChatService>();
