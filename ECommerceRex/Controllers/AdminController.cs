@@ -56,5 +56,26 @@ public class AdminController : Controller
         return View(products);
     }
 
+    [HttpGet]
+public IActionResult RegisterFace(int userId)
+{
+    ViewBag.UserId = userId;
+    return View();
+}
+
+[HttpPost]
+public async Task<IActionResult> RegisterFace(int userId, string imageBase64)
+{
+    var user = await _context.Users.FindAsync(userId);
+    if (user == null) return NotFound();
+
+    var encoding = await _faceRecognitionService.RegisterFaceAsync(userId, imageBase64);
+    // Store as JSON
+    user.FaceEmbeddings = JsonSerializer.Serialize(encoding);
+    await _context.SaveChangesAsync();
+
+    return Json(new { success = true });
+}
+
     public IActionResult CRM() { return View(); }
 }
