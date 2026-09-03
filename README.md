@@ -120,7 +120,7 @@ dotnet ef database update
 5. Start the app:
    
 ```bash
-dotnet run --project src/ECommerceRex
+dotnet run --project ECommerceRex
 ```
 
 The app will be available at http://localhost:5000.
