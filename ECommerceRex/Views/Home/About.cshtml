@@ -1,13 +1,57 @@
 @{
-    ViewData["Title"] = "About";
+    ViewData["Title"] = "About Us";
 }
-<div class="glass-card">
-    <h2>About E‑Commerce Rex</h2>
-    <p>We are a next‑gen e‑commerce platform built with .NET 10, featuring HMAC‑protected ledger, JWT authentication, and a glassmorphism UI.</p>
-    <ul>
-        <li>Secure transactions</li>
-        <li>Real‑time inventory</li>
-        <li>Integrated banking wallet</li>
-        <li>Attendance tracking</li>
-    </ul>
+
+<div class="about-page">
+    <!-- Main about content -->
+    <div class="glass-card" style="margin-bottom: 2rem;">
+        <h2>About E‑Commerce Rex</h2>
+        <p>
+            We are a next‑gen e‑commerce platform built with .NET 10, featuring HMAC‑protected ledger, 
+            JWT authentication, and a stunning glassmorphism UI. Our mission is to provide secure, 
+            scalable, and high‑performance solutions for modern businesses.
+        </p>
+        <ul>
+            <li>🔐 Secure transactions with tamper‑evident ledger</li>
+            <li>📦 Real‑time inventory management</li>
+            <li>💳 Integrated banking wallet</li>
+            <li>⏱️ Attendance tracking with QR and face recognition</li>
+        </ul>
+    </div>
+
+    <!-- Team Section -->
+    <div class="glass-card">
+        <h2 style="text-align:center; margin-bottom: 1.5rem;">👨‍💻 Meet the Team</h2>
+        <div class="team-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.5rem;">
+            <!-- Team Member 1 -->
+            <div class="team-member glass-card" style="text-align:center; padding:1.5rem; background:rgba(24,15,41,0.4); border-color:rgba(168,85,247,0.2);">
+                <div style="font-size:3.5rem; margin-bottom:0.5rem;">👩‍💻
+                    <img src="/images/team/alice.jpg" alt="Alice Johnson" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid rgba(168,85,247,0.3);" />
+                </div>
+                <h3 style="margin:0.2rem 0; color:#c084fc;">Alice Johnson</h3>
+                <p style="color:#b0a0c8; font-weight:600;">Project Lead</p>
+                <p style="font-size:0.9rem; color:#d8cff0;">Full‑stack architect with 10+ years in e‑commerce and distributed systems.</p>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="team-member glass-card" style="text-align:center; padding:1.5rem; background:rgba(24,15,41,0.4); border-color:rgba(168,85,247,0.2);">
+                <div style="font-size:3.5rem; margin-bottom:0.5rem;">👨‍💻
+                    <img src="/images/team/alice.jpg" alt="Alice Johnson" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid rgba(168,85,247,0.3);" />
+                </div>
+                <h3 style="margin:0.2rem 0; color:#c084fc;">Bob Smith</h3>
+                <p style="color:#b0a0c8; font-weight:600;">Senior Developer</p>
+                <p style="font-size:0.9rem; color:#d8cff0;">Specialist in .NET, microservices, and database optimisation.</p>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="team-member glass-card" style="text-align:center; padding:1.5rem; background:rgba(24,15,41,0.4); border-color:rgba(168,85,247,0.2);">
+                <div style="font-size:3.5rem; margin-bottom:0.5rem;">🎨
+                    <img src="/images/team/alice.jpg" alt="Alice Johnson" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid rgba(168,85,247,0.3);" />
+                </div>
+                <h3 style="margin:0.2rem 0; color:#c084fc;">Carol Davis</h3>
+                <p style="color:#b0a0c8; font-weight:600;">UI/UX Designer</p>
+                <p style="font-size:0.9rem; color:#d8cff0;">Crafting intuitive interfaces with a focus on accessibility and modern aesthetics.</p>
+            </div>
+        </div>
+    </div>
 </div>
