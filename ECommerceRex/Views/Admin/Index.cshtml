@@ -6,17 +6,14 @@
     var messagesChange = -20;
     var emailsChange = 33;
 
-    // Tickets created vs solved (last 7 days)
     var days = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
     var createdData = new[] { 45, 60, 55, 68, 50, 42, 30 };
     var solvedData = new[] { 30, 45, 40, 55, 48, 35, 28 };
     var maxTickets = 68;
 
-    // Tickets status distribution
     var statusLabels = new[] { "Created", "Opened", "Responded", "Solved", "Other", "Deleted" };
     var statusValues = new[] { 120, 80, 65, 150, 30, 10 };
 
-    // New vs Returned tickets per category
     var categories = new[] { "Sales", "Setup", "Bug", "Features" };
     var newTickets = new[] { 45, 30, 25, 50 };
     var returnedTickets = new[] { 15, 10, 8, 12 };
@@ -27,84 +24,57 @@
 
 @section Styles {
     <style>
+        /* --- Responsive dashboard styles --- */
         .dashboard-stat {
             text-align: center;
-            padding: 1.2rem 0.5rem;
+            padding: 1rem 0.5rem;
         }
         .stat-number {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: #c084fc;
         }
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #b0a0c8;
         }
         .stat-change {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
         }
         .stat-change.positive { color: #4ade80; }
         .stat-change.negative { color: #f87171; }
+
         .chart-container {
             position: relative;
-            height: 200px;
+            height: 180px;
             width: 100%;
+            min-height: 150px;
         }
         .chart-container.pie {
-            height: 180px;
+            height: 160px;
         }
         .dashboard-card {
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1.2rem;
         }
         .dashboard-card h3 {
             margin-top: 0;
             font-size: 1rem;
             font-weight: 600;
             color: #c4b5e0;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
-        .ticket-summary {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+
+        /* Two-column layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-bottom: 1.2rem;
         }
-        .ticket-summary .summary-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0.5rem 1rem;
-        }
-        .summary-item .number {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #c084fc;
-        }
-        .summary-item .label {
-            font-size: 0.8rem;
-            color: #b0a0c8;
-        }
-        .btn-download {
-            background: rgba(124,58,237,0.2);
-            border: 1px solid rgba(168,85,247,0.3);
-            color: #c084fc;
-            padding: 0.4rem 1.2rem;
-            border-radius: 1.5rem;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: 0.2s;
-        }
-        .btn-download:hover {
-            background: rgba(124,58,237,0.4);
-            border-color: #c084fc;
-        }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+
+        /* Category bars */
         .ticket-category-bars {
             margin-top: 0.5rem;
         }
@@ -114,16 +84,17 @@
             margin-bottom: 0.4rem;
         }
         .category-label {
-            width: 60px;
+            width: 55px;
             font-size: 0.8rem;
             color: #d8cff0;
+            flex-shrink: 0;
         }
         .category-bar-bg {
             flex: 1;
             height: 8px;
             background: rgba(168,85,247,0.15);
             border-radius: 4px;
-            margin: 0 0.5rem;
+            margin: 0 0.4rem;
             overflow: hidden;
         }
         .category-bar-fill {
@@ -133,20 +104,127 @@
         }
         .category-values {
             display: flex;
-            gap: 0.5rem;
-            font-size: 0.8rem;
+            gap: 0.4rem;
+            font-size: 0.75rem;
             color: #b0a0c8;
-            min-width: 60px;
+            min-width: 50px;
             justify-content: flex-end;
+            flex-shrink: 0;
         }
         .category-values .new { color: #4ade80; }
         .category-values .returned { color: #fbbf24; }
+
+        /* Footer summary */
+        .ticket-summary {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .ticket-summary .summary-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.3rem 0.5rem;
+        }
+        .summary-item .number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #c084fc;
+        }
+        .summary-item .label {
+            font-size: 0.75rem;
+            color: #b0a0c8;
+        }
+        .btn-download {
+            background: rgba(124,58,237,0.2);
+            border: 1px solid rgba(168,85,247,0.3);
+            color: #c084fc;
+            padding: 0.3rem 1rem;
+            border-radius: 1.5rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .btn-download:hover {
+            background: rgba(124,58,237,0.4);
+            border-color: #c084fc;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Mobile adjustments --- */
+        @@media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr !important;
+            }
+            .two-col {
+                grid-template-columns: 1fr !important;
+            }
+            .stat-number {
+                font-size: 1.4rem;
+            }
+            .chart-container {
+                height: 150px;
+            }
+            .chart-container.pie {
+                height: 140px;
+            }
+            .dashboard-card {
+                padding: 0.8rem;
+            }
+            .ticket-summary {
+                justify-content: center;
+            }
+            .ticket-summary .summary-item {
+                flex: 1 0 40%;
+                padding: 0.2rem;
+            }
+            .category-label {
+                width: 45px;
+                font-size: 0.7rem;
+            }
+            .category-values {
+                font-size: 0.7rem;
+                min-width: 40px;
+            }
+            .btn-download {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.8rem;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .stat-number {
+                font-size: 1.2rem;
+            }
+            .chart-container {
+                height: 130px;
+            }
+            .chart-container.pie {
+                height: 120px;
+            }
+            .ticket-summary .summary-item {
+                flex: 1 0 100%;
+            }
+            .dashboard-card h3 {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 }
 
 <div class="admin-dashboard">
     <!-- Top stats row -->
-    <div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+    <div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:1rem; margin-bottom:1.5rem;">
         <div class="glass-card dashboard-stat">
             <div class="stat-number">@firstReplyAvg</div>
             <div class="stat-label">Avg First Reply Time</div>
@@ -167,7 +245,7 @@
         </div>
     </div>
 
-    <!-- First Reply & Full Resolve Time (bar chart) -->
+    <!-- First Reply & Full Resolve Time -->
     <div class="glass-card dashboard-card">
         <h3>First Reply and Full Resolve Time</h3>
         <div class="chart-container">
@@ -175,19 +253,19 @@
         </div>
     </div>
 
-    <!-- Tickets Created vs Solved (bar chart) -->
+    <!-- Tickets Created vs Solved -->
     <div class="glass-card dashboard-card">
         <div class="flex-between">
             <h3>Tickets Created vs Tickets Solved</h3>
-            <span style="color:#b0a0c8; font-size:0.8rem;">Max = @maxTickets</span>
+            <span style="color:#b0a0c8; font-size:0.75rem;">Max = @maxTickets</span>
         </div>
         <div class="chart-container">
             <canvas id="ticketsChart"></canvas>
         </div>
     </div>
 
-    <!-- Two-column: Status pie + New vs Returned bars -->
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+    <!-- Two-column: Status + New vs Returned -->
+    <div class="two-col">
         <!-- Tickets Status (donut) -->
         <div class="glass-card dashboard-card">
             <h3>Tickets Status</h3>
@@ -198,7 +276,7 @@
 
         <!-- New Tickets vs Returned Tickets per category -->
         <div class="glass-card dashboard-card">
-            <h3>New Tickets vs Returned Tickets</h3>
+            <h3>New vs Returned Tickets</h3>
             <div class="ticket-category-bars">
                 @for (int i = 0; i < categories.Length; i++)
                 {
@@ -220,7 +298,7 @@
         </div>
     </div>
 
-    <!-- Footer summary: Returned Tickets, New vs Returned percentage, download -->
+    <!-- Footer summary -->
     <div class="glass-card dashboard-card">
         <div class="ticket-summary">
             <div class="summary-item">
@@ -236,10 +314,10 @@
                 <span class="label">Returned Tickets</span>
             </div>
             <div class="summary-item">
-                <a href="#" class="btn-download">📥 Full Tickets Report</a>
+                <a href="#" class="btn-download">📥 Full Report</a>
             </div>
             <div class="summary-item">
-                <a href="#" style="color:#c084fc; text-decoration:none; font-weight:500;">View full statement →</a>
+                <a href="#" style="color:#c084fc; text-decoration:none; font-weight:500; font-size:0.85rem;">View full →</a>
             </div>
         </div>
     </div>
@@ -248,8 +326,12 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Force redraw after a short delay to handle mobile layout
+        setTimeout(() => {
+             window.dispatchEvent(new Event('resize'));
+        }, 500);
         document.addEventListener('DOMContentLoaded', function() {
-            // ----- First Reply & Full Resolve Time (bar) -----
+            // ----- First Reply & Full Resolve Time -----
             const ctx1 = document.getElementById('resolveTimeChart').getContext('2d');
             new Chart(ctx1, {
                 type: 'bar',
@@ -263,7 +345,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#d8cff0' } } },
+                    plugins: { legend: { labels: { color: '#d8cff0', boxWidth: 12, padding: 8 } } },
                     scales: {
                         x: { ticks: { color: '#b0a0c8' }, grid: { color: 'rgba(168,85,247,0.1)' } },
                         y: { ticks: { color: '#b0a0c8' }, grid: { color: 'rgba(168,85,247,0.1)' } }
@@ -271,7 +353,7 @@
                 }
             });
 
-            // ----- Tickets Created vs Solved (bar) -----
+            // ----- Tickets Created vs Solved -----
             const ctx2 = document.getElementById('ticketsChart').getContext('2d');
             new Chart(ctx2, {
                 type: 'bar',
@@ -285,7 +367,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#d8cff0' } } },
+                    plugins: { legend: { labels: { color: '#d8cff0', boxWidth: 12, padding: 8 } } },
                     scales: {
                         x: { ticks: { color: '#b0a0c8' }, grid: { color: 'rgba(168,85,247,0.1)' } },
                         y: { ticks: { color: '#b0a0c8' }, grid: { color: 'rgba(168,85,247,0.1)' }, beginAtZero: true }
@@ -309,7 +391,10 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'right', labels: { color: '#d8cff0', boxWidth: 12, padding: 8 } }
+                        legend: { 
+                            position: 'right', 
+                            labels: { color: '#d8cff0', boxWidth: 10, padding: 6, font: { size: 10 } }
+                        }
                     },
                     cutout: '70%'
                 }
