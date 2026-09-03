@@ -1,8 +1,171 @@
+@model IEnumerable<ECommerceRex.Models.Product>
 @{
-    ViewData["Title"] = "Products Overview";
+    ViewData["Title"] = "Our Products";
+    var categories = ViewBag.Categories as List<string> ?? new List<string>();
+    var brands = ViewBag.Brands as List<string> ?? new List<string>();
+    var selectedCategory = ViewBag.SelectedCategory as string;
+    var selectedBrand = ViewBag.SelectedBrand as string;
 }
-<div class="glass-card">
-    <h2>Our Products</h2>
-    <p>Explore our curated catalog. Use the navigation to manage products.</p>
-    <a href="/Products" class="btn-primary" style="display:inline-block; width:auto;">Go to Products</a>
+
+<style>
+    .product-catalog .filter-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+    .filter-nav .filter-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem 0.8rem;
+        align-items: center;
+    }
+    .filter-nav .filter-group .label {
+        color: #b0a0c8;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-right: 0.5rem;
+    }
+    .filter-nav a {
+        color: #d8cff0;
+        text-decoration: none;
+        padding: 0.2rem 0.8rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(168,85,247,0.2);
+        transition: 0.2s;
+        font-size: 0.9rem;
+    }
+    .filter-nav a:hover {
+        background: rgba(124,58,237,0.2);
+        border-color: #c084fc;
+    }
+    .filter-nav a.active {
+        background: rgba(124,58,237,0.4);
+        border-color: #c084fc;
+        color: #c084fc;
+    }
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+    .product-card {
+        padding: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.2s;
+        cursor: default;
+    }
+    .product-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(168,85,247,0.4);
+    }
+    .product-card .product-image {
+        font-size: 3.5rem;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+    .product-card h3 {
+        margin: 0.2rem 0;
+        color: #e0d7f0;
+        font-size: 1.1rem;
+    }
+    .product-card .price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #c084fc;
+        margin: 0.2rem 0;
+    }
+    .product-card .stock {
+        font-size: 0.8rem;
+        color: #b0a0c8;
+        margin-bottom: 0.5rem;
+    }
+    .product-card .btn-details {
+        background: rgba(124,58,237,0.2);
+        border: 1px solid rgba(168,85,247,0.3);
+        color: #c084fc;
+        padding: 0.3rem 1rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        font-size: 0.85rem;
+        text-align: center;
+        transition: 0.2s;
+        align-self: stretch;
+        text-align: center;
+    }
+    .product-card .btn-details:hover {
+        background: rgba(124,58,237,0.4);
+        border-color: #c084fc;
+    }
+    .no-products {
+        text-align: center;
+        padding: 3rem;
+        color: #b0a0c8;
+    }
+</style>
+
+<div class="product-catalog">
+    <h1 style="text-align:center; margin-bottom:1.5rem;">Our Products</h1>
+
+    <!-- Filters -->
+    <div class="filter-nav glass-card" style="padding:1rem 1.5rem; background:rgba(24,15,41,0.3);">
+        <div class="filter-group">
+            <span class="label">Category:</span>
+            <a href="/Home/Product?category=All&brand=@(selectedBrand ?? "All")" class="@(string.IsNullOrEmpty(selectedCategory) || selectedCategory == "All" ? "active" : "")">All</a>
+            @foreach (var cat in categories)
+            {
+                var active = selectedCategory == cat ? "active" : "";
+                <a href="/Home/Product?category=@cat&brand=@(selectedBrand ?? "All")" class="@active">@cat</a>
+            }
+        </div>
+        <div class="filter-group">
+            <span class="label">Brand:</span>
+            <a href="/Home/Product?category=@(selectedCategory ?? "All")&brand=All" class="@(string.IsNullOrEmpty(selectedBrand) || selectedBrand == "All" ? "active" : "")">All</a>
+            @foreach (var b in brands)
+            {
+                var active = selectedBrand == b ? "active" : "";
+                <a href="/Home/Product?category=@(selectedCategory ?? "All")&brand=@b" class="@active">@b</a>
+            }
+        </div>
+        <!-- Reset link -->
+        <div>
+            <a href="/Home/Product" style="color:#f87171; border-color:rgba(248,113,113,0.3);">Clear Filters</a>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    @if (!Model.Any())
+    {
+        <div class="glass-card no-products">
+            <p>No products found matching your filters.</p>
+        </div>
+    }
+    else
+    {
+        <div class="product-grid">
+            @foreach (var product in Model)
+            {
+                <div class="product-card glass-card">
+                    <div class="product-image">
+                        @* Placeholder icon – you can replace with actual image *@
+                        @(product.Category?.ToLower() switch
+                        {
+                            "laptop" => "💻",
+                            "mobile" => "📱",
+                            "desktop" => "🖥️",
+                            _ => "📦"
+                        })
+                    </div>
+                    <h3>@product.Name</h3>
+                    <div class="price">@product.Price.ToString("C")</div>
+                    <div class="stock">@product.StockQuantity in stock</div>
+                    <a href="/Home/ProductDetails/@product.Id" class="btn-details">View Details →</a>
+                </div>
+            }
+        </div>
+    }
 </div>
