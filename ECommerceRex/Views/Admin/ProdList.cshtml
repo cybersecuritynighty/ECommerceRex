@@ -19,3 +19,38 @@
         </tbody>
     </table>
 </div>
+
+<div class="glass-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:1rem;">
+        <h2>All Products</h2>
+        <a href="/Admin/ProductCreate" class="btn-primary" style="width:auto; padding:0.4rem 1.2rem;">+ Add Product</a>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <table class="table" style="width:100%; border-collapse:collapse; min-width:600px;">
+            <thead>
+                <tr><th>Name</th><th>Price</th><th>Stock</th><th>Category</th><th style="text-align:center;">Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr style="border-bottom:1px solid rgba(168,85,247,0.08);">
+                        <td>@p.Name</td>
+                        <td>@p.Price.ToString("C")</td>
+                        <td>@p.StockQuantity</td>
+                        <td>@(p.Category ?? "—")</td>
+                        <td style="text-align:center;">
+                            <div style="display:flex; gap:0.4rem; justify-content:center;">
+                                <a href="/Admin/ProductEdit/@p.Id" class="btn-action" style="color:#fbbf24; text-decoration:none; padding:0.2rem 0.6rem; border:1px solid rgba(251,191,36,0.2); border-radius:0.3rem; font-size:0.75rem;">Edit</a>
+                                <form asp-action="ProductDelete" method="post" style="display:inline;" onsubmit="return confirm('Delete product @p.Name ?');">
+                                    <input type="hidden" name="id" value="@p.Id" />
+                                    <button type="submit" class="btn-action" style="background:transparent; border:1px solid rgba(248,113,113,0.2); color:#f87171; padding:0.2rem 0.6rem; border-radius:0.3rem; font-size:0.75rem; cursor:pointer;">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
