@@ -1,8 +1,171 @@
 @{
-    ViewData["Title"] = "CRM";
+    ViewData["Title"] = "CRM – Customer Management";
+    // Sample data – in production, fetch from database
+    var totalCustomers = 1,247;
+    var activeCustomers = 892;
+    var newThisMonth = 143;
+    var customers = new List<dynamic>
+    {
+        new { Id = 1, Name = "Alice Johnson", Email = "alice@email.com", Phone = "+1 555-0101", Orders = 12, LastContact = "2026-09-01", Status = "Active" },
+        new { Id = 2, Name = "Bob Smith", Email = "bob@email.com", Phone = "+1 555-0102", Orders = 8, LastContact = "2026-08-28", Status = "Active" },
+        new { Id = 3, Name = "Carol Davis", Email = "carol@email.com", Phone = "+1 555-0103", Orders = 5, LastContact = "2026-08-20", Status = "Inactive" },
+        new { Id = 4, Name = "David Wilson", Email = "david@email.com", Phone = "+1 555-0104", Orders = 20, LastContact = "2026-09-02", Status = "Active" },
+        new { Id = 5, Name = "Eva Martinez", Email = "eva@email.com", Phone = "+1 555-0105", Orders = 3, LastContact = "2026-08-15", Status = "Inactive" },
+        new { Id = 6, Name = "Frank Lee", Email = "frank@email.com", Phone = "+1 555-0106", Orders = 15, LastContact = "2026-09-01", Status = "Active" },
+        new { Id = 7, Name = "Grace Kim", Email = "grace@email.com", Phone = "+1 555-0107", Orders = 7, LastContact = "2026-08-25", Status = "Active" }
+    };
 }
-<div class="glass-card">
-    <h2>Customer Relationship Management</h2>
-    <p>Manage customers, support tickets, and communication logs.</p>
-    <!-- Placeholder -->
+
+<div class="crm-page">
+    <!-- Stats Cards -->
+    <div class="stats-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+        <div class="glass-card" style="text-align:center; padding:1rem;">
+            <div style="font-size:2rem; font-weight:700; color:#c084fc;">@totalCustomers</div>
+            <div style="color:#b0a0c8;">Total Customers</div>
+        </div>
+        <div class="glass-card" style="text-align:center; padding:1rem;">
+            <div style="font-size:2rem; font-weight:700; color:#4ade80;">@activeCustomers</div>
+            <div style="color:#b0a0c8;">Active</div>
+        </div>
+        <div class="glass-card" style="text-align:center; padding:1rem;">
+            <div style="font-size:2rem; font-weight:700; color:#fbbf24;">@newThisMonth</div>
+            <div style="color:#b0a0c8;">New This Month</div>
+        </div>
+        <div class="glass-card" style="text-align:center; padding:1rem;">
+            <div style="font-size:2rem; font-weight:700; color:#f87171;">@(totalCustomers - activeCustomers)</div>
+            <div style="color:#b0a0c8;">Inactive</div>
+        </div>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="glass-card" style="margin-bottom:1.5rem; padding:1rem; display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+        <div style="flex:1; min-width:200px;">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by name, email, phone..." style="background:rgba(24,15,41,0.3); border:1px solid rgba(168,85,247,0.3); border-radius:0.75rem; padding:0.5rem 1rem; color:#e0d7f0; width:100%;" />
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <select id="statusFilter" class="form-control" style="width:auto; background:rgba(24,15,41,0.3); border:1px solid rgba(168,85,247,0.3); border-radius:0.75rem; padding:0.5rem 1rem; color:#e0d7f0;">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+            <button id="clearFiltersBtn" class="btn-secondary" style="background:transparent; border:1px solid rgba(168,85,247,0.3); border-radius:0.75rem; padding:0.5rem 1rem; color:#c084fc; cursor:pointer;">Clear</button>
+            <a href="#" class="btn-primary" style="width:auto; padding:0.5rem 1.2rem;">+ Add Customer</a>
+        </div>
+    </div>
+
+    <!-- Customer Table -->
+    <div class="glass-card" style="overflow-x:auto; padding:0;">
+        <table class="customer-table" style="width:100%; border-collapse:collapse; min-width:600px;">
+            <thead>
+                <tr style="border-bottom:1px solid rgba(168,85,247,0.2);">
+                    <th style="padding:1rem; text-align:left; color:#c4b5e0; font-weight:600;">Name</th>
+                    <th style="padding:1rem; text-align:left; color:#c4b5e0; font-weight:600;">Email</th>
+                    <th style="padding:1rem; text-align:left; color:#c4b5e0; font-weight:600;">Phone</th>
+                    <th style="padding:1rem; text-align:center; color:#c4b5e0; font-weight:600;">Orders</th>
+                    <th style="padding:1rem; text-align:center; color:#c4b5e0; font-weight:600;">Last Contact</th>
+                    <th style="padding:1rem; text-align:center; color:#c4b5e0; font-weight:600;">Status</th>
+                    <th style="padding:1rem; text-align:center; color:#c4b5e0; font-weight:600;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="customerTableBody">
+                @foreach (var c in customers)
+                {
+                    var statusClass = c.Status == "Active" ? "status-active" : "status-inactive";
+                    <tr class="customer-row" data-name="@c.Name" data-email="@c.Email" data-phone="@c.Phone" data-status="@c.Status" style="border-bottom:1px solid rgba(168,85,247,0.08);">
+                        <td style="padding:0.75rem 1rem; color:#e0d7f0;">@c.Name</td>
+                        <td style="padding:0.75rem 1rem; color:#b0a0c8;">@c.Email</td>
+                        <td style="padding:0.75rem 1rem; color:#b0a0c8;">@c.Phone</td>
+                        <td style="padding:0.75rem 1rem; text-align:center; color:#c084fc;">@c.Orders</td>
+                        <td style="padding:0.75rem 1rem; text-align:center; color:#b0a0c8;">@c.LastContact</td>
+                        <td style="padding:0.75rem 1rem; text-align:center;">
+                            <span class="status-badge @statusClass" style="display:inline-block; padding:0.2rem 0.8rem; border-radius:1rem; font-size:0.75rem; font-weight:600; background:@(c.Status == "Active" ? "rgba(74,222,128,0.2)" : "rgba(248,113,113,0.2)"); color:@(c.Status == "Active" ? "#4ade80" : "#f87171");">
+                                @c.Status
+                            </span>
+                        </td>
+                        <td style="padding:0.75rem 1rem; text-align:center;">
+                            <div style="display:flex; gap:0.3rem; justify-content:center;">
+                                <a href="#" class="btn-action" style="color:#c084fc; text-decoration:none; padding:0.2rem 0.5rem; border-radius:0.3rem; border:1px solid rgba(168,85,247,0.2); font-size:0.75rem;">View</a>
+                                <a href="#" class="btn-action" style="color:#fbbf24; text-decoration:none; padding:0.2rem 0.5rem; border-radius:0.3rem; border:1px solid rgba(251,191,36,0.2); font-size:0.75rem;">Edit</a>
+                                <a href="#" class="btn-action" style="color:#f87171; text-decoration:none; padding:0.2rem 0.5rem; border-radius:0.3rem; border:1px solid rgba(248,113,113,0.2); font-size:0.75rem;">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div style="padding:1rem; border-top:1px solid rgba(168,85,247,0.1); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <span style="color:#b0a0c8; font-size:0.85rem;">Showing @customers.Count customers</span>
+            <div style="display:flex; gap:0.3rem;">
+                <button class="pagination-btn" style="background:transparent; border:1px solid rgba(168,85,247,0.2); color:#c084fc; padding:0.2rem 0.8rem; border-radius:0.3rem; cursor:pointer;">Prev</button>
+                <button class="pagination-btn active" style="background:rgba(124,58,237,0.3); border:1px solid #7c3aed; color:#c084fc; padding:0.2rem 0.8rem; border-radius:0.3rem; cursor:pointer;">1</button>
+                <button class="pagination-btn" style="background:transparent; border:1px solid rgba(168,85,247,0.2); color:#c084fc; padding:0.2rem 0.8rem; border-radius:0.3rem; cursor:pointer;">2</button>
+                <button class="pagination-btn" style="background:transparent; border:1px solid rgba(168,85,247,0.2); color:#c084fc; padding:0.2rem 0.8rem; border-radius:0.3rem; cursor:pointer;">3</button>
+                <button class="pagination-btn" style="background:transparent; border:1px solid rgba(168,85,247,0.2); color:#c084fc; padding:0.2rem 0.8rem; border-radius:0.3rem; cursor:pointer;">Next</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const clearBtn = document.getElementById('clearFiltersBtn');
+            const rows = document.querySelectorAll('.customer-row');
+
+            function filterTable() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                const status = statusFilter.value;
+
+                rows.forEach(row => {
+                    const name = row.dataset.name.toLowerCase();
+                    const email = row.dataset.email.toLowerCase();
+                    const phone = row.dataset.phone.toLowerCase();
+                    const rowStatus = row.dataset.status;
+
+                    let visible = true;
+                    if (searchTerm && !name.includes(searchTerm) && !email.includes(searchTerm) && !phone.includes(searchTerm)) {
+                        visible = false;
+                    }
+                    if (status && rowStatus !== status) {
+                        visible = false;
+                    }
+                    row.style.display = visible ? '' : 'none';
+                });
+            }
+
+            searchInput.addEventListener('input', filterTable);
+            statusFilter.addEventListener('change', filterTable);
+
+            clearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                statusFilter.value = '';
+                filterTable();
+            });
+
+            // Pagination placeholders – just visual
+            document.querySelectorAll('.pagination-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // In real app, would fetch new page of data
+                    alert('Pagination not implemented – would fetch page ' + this.textContent);
+                });
+            });
+
+            // Action buttons – placeholders
+            document.querySelectorAll('.btn-action').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Action: ' + this.textContent.trim() + ' – would open modal or navigate.');
+                });
+            });
+
+            // Add Customer button
+            document.querySelector('a[href="#"]:not(.btn-action)').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Add Customer – would open a form.');
+            });
+        });
+    </script>
+}
