@@ -232,3 +232,50 @@ body {
         font-size: 2.2rem;
     }
 }
+
+
+/* Sponser logo */
+
+.centerContent {
+    max-width: var(--max-width);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 50px;
+    width: max-content;
+    margin: 50px 0px;
+}
+
+.containerSponser {
+    margin: 0 auto;
+    width: 90%;
+    overflow: hidden;
+    mask-image: linear-gradient( to right, transparent, #000 20%, #000 80%, transparent);
+    cursor: pointer;
+}
+
+.wrapperSponser {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: scroll 20s linear infinite;
+}
+
+@keyframes scroll {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.logoSponser {
+    font-family: 'Basic', 'Math', bold;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-right: 2rem;
+}
+
+    .logoSponser img {
+        opacity: 0.7;
+    }
